@@ -28,9 +28,15 @@ class App extends Component {
 
         this.state = {
             list,
+            searchTerm: '',
         };
 
+        this.onSearchChange = this.onSearchChange.bind(this);
         this.onDismiss = this.onDismiss.bind(this);
+    }
+
+    onSearchChange(event) {
+        this.setState({searchTerm: event.target.value});
     }
 
     onDismiss(id) {
@@ -42,6 +48,12 @@ class App extends Component {
     render() {
         return (
             <div className="App">
+                <form>
+                    <input
+                        type="text"
+                        onChange={this.onSearchChange}
+                    />
+                </form>
                 {this.state.list.map(item =>
                     <div key={item.objectID}>
                         <span><a href={item.url}>{item.title}</a></span>
