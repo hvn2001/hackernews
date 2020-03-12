@@ -44,6 +44,19 @@ class Search extends Component {
     }
 }
 
+/*const Search = ({value, onChange, children}) => {
+    // do something
+    return (
+        <form>
+            {children} <input
+            type="text"
+            value={value}
+            onChange={onChange}
+        />
+        </form>
+    );
+}*/
+
 class Table extends Component {
     render() {
         const {list, pattern, onDismiss} = this.props;
