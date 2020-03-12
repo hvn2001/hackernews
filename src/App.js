@@ -104,8 +104,14 @@ class App extends Component {
 
     onDismiss(id) {
         const isNotId = item => item.objectID !== id; // ES6 arrow function
-        const updatedList = this.state.list.filter(isNotId);
-        this.setState({list: updatedList});
+        const updatedHits = this.state.result.hits.filter(isNotId);
+        console.log({hits: updatedHits});
+        console.log({...this.state.result, hits: updatedHits});
+        this.setState({
+            // result: Object.assign({}, {}, {hits: updatedHits})
+            // result: {hits: updatedHits} // miss some attr
+            result: {...this.state.result, hits: updatedHits}
+        });
     }
 
     render() {
