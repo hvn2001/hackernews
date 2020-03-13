@@ -75,6 +75,7 @@ class App extends Component {
         };
 
         this.onSearchChange = this.onSearchChange.bind(this);
+        this.onSearchSubmit = this.onSearchSubmit.bind(this);
         this.onDismiss = this.onDismiss.bind(this);
         this.setSearchTopstories = this.setSearchTopstories.bind(this);
         this.fetchSearchTopstories = this.fetchSearchTopstories.bind(this);
@@ -100,6 +101,11 @@ class App extends Component {
 
     onSearchChange(event) {
         this.setState({searchTerm: event.target.value});
+    }
+
+    onSearchSubmit() {
+        const {searchTerm} = this.state;
+        this.fetchSearchTopStories(searchTerm);
     }
 
     onDismiss(id) {
