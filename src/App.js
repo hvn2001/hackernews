@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import axios from 'axios';
 
 require('./App.css');
 
@@ -72,6 +73,8 @@ class Table extends Component {
 
 class App extends Component {
 
+    _isMounted = false;
+
     constructor(props) {
         super(props);
 
@@ -116,18 +119,21 @@ class App extends Component {
 
 
     fetchSearchTopstories(searchTerm, page = 0) {
-        fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`)
-            .then(response => response.json())
-            .then(result => this.setSearchTopstories(result))
-            .catch(error => this.setState({error}));
+        axios(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`)
+            .then(result => this._isMounted && this.setSearchTopstories(result.data))
+            .catch(error => this._isMounted && this.setState({error}));
     }
 
     componentDidMount() {
+        this._isMounted = true;
         const {searchTerm} = this.state;
         this.setState({searchKey: searchTerm});
         this.fetchSearchTopstories(searchTerm);
     }
 
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
 
     onSearchChange(event) {
         this.setState({searchTerm: event.target.value});
