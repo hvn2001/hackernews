@@ -19,13 +19,16 @@ const isSearched = (searchTerm) => (item) =>
 
 class Search extends Component {
     render() {
-        const {value, onChange, children} = this.props;
-        return <form> {children}
+        const {value, onChange, onSubmit, children} = this.props;
+        return <form onSubmit={onSubmit}>
             <input
                 type="text"
                 value={value}
                 onChange={onChange}
             />
+            <button type="submit">
+                {children}
+            </button>
         </form>;
     }
 }
@@ -45,10 +48,10 @@ class Search extends Component {
 
 class Table extends Component {
     render() {
-        const {list, pattern, onDismiss} = this.props;
+        const {list, onDismiss} = this.props;
         return (
             <div className="table">
-                {list.filter(_isSearched(pattern)).map(item =>
+                {list.map(item =>
                     <div key={item.objectID} className="table-row">
                         <span style={{width: '40%'}}><a href={item.url}>{item.title}</a></span>
                         <span style={{width: '30%'}}>{item.author}</span>
@@ -103,9 +106,10 @@ class App extends Component {
         this.setState({searchTerm: event.target.value});
     }
 
-    onSearchSubmit() {
+    onSearchSubmit(event) {
         const {searchTerm} = this.state;
-        this.fetchSearchTopStories(searchTerm);
+        this.fetchSearchTopstories(searchTerm);
+        event.preventDefault();
     }
 
     onDismiss(id) {
@@ -128,7 +132,8 @@ class App extends Component {
         return (
             <div className="page">
                 <div className="interactions">
-                    <Search value={searchTerm} onChange={this.onSearchChange}>Search</Search>
+                    <Search value={searchTerm} onChange={this.onSearchChange}
+                            onSubmit={this.onSearchSubmit}>Search</Search>
                 </div>
                 {/*<Table list={result.hits} pattern={searchTerm} onDismiss={this.onDismiss}/>*/}
                 {/*{result
@@ -136,7 +141,7 @@ class App extends Component {
                     : null
                 }*/}
                 {result &&
-                <Table list={result.hits} pattern={searchTerm} onDismiss={this.onDismiss}/>
+                <Table list={result.hits} onDismiss={this.onDismiss}/>
                 }
             </div>
         );
