@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { sortBy } from 'lodash';
+import {sortBy} from 'lodash';
+
 require('./App.css');
 
 const DEFAULT_QUERY = 'redux';
@@ -58,12 +59,57 @@ class Search extends Component {
     );
 }*/
 
+const Sort = ({sortKey, onSort, children}) =>
+    <Button
+        onClick={() => onSort(sortKey)}
+        className="button-inline"
+    >
+        {children}
+    </Button>
+
 class Table extends Component {
     render() {
-        const {list, onDismiss} = this.props;
+        const {list, onDismiss, sortKey, onSort} = this.props;
         return (
             <div className="table">
-                {list.map(item =>
+                <div className="table-header">
+                  <span style={{width: '40%'}}>
+                    <Sort
+                        sortKey={'TITLE'}
+                        onSort={onSort}
+                    >
+                      Title
+                    </Sort>
+                  </span>
+                    <span style={{width: '30%'}}>
+                    <Sort
+                        sortKey={'AUTHOR'}
+                        onSort={onSort}
+                    >
+                      Author
+                    </Sort>
+                  </span>
+                    <span style={{width: '10%'}}>
+                    <Sort
+                        sortKey={'COMMENTS'}
+                        onSort={onSort}
+                    >
+                      Comments
+                    </Sort>
+                  </span>
+                    <span style={{width: '10%'}}>
+                    <Sort
+                        sortKey={'POINTS'}
+                        onSort={onSort}
+                    >
+                      Points
+                    </Sort>
+                  </span>
+                    <span style={{width: '10%'}}>
+                    Archive
+                  </span>
+                </div>
+                {SORTS[sortKey](list).map(item =>
                     <div key={item.objectID} className="table-row">
                         <span style={{width: '40%'}}><a href={item.url}>{item.title}</a></span>
                         <span style={{width: '30%'}}>{item.author}</span>
@@ -108,6 +154,14 @@ const withLoading = (Component) => ({isLoading, ...rest}) =>
 
 const ButtonWithLoading = withLoading(Button);
 
+const SORTS = {
+    NONE: list => list,
+    TITLE: list => sortBy(list, 'title'),
+    AUTHOR: list => sortBy(list, 'author'),
+    COMMENTS: list => sortBy(list, 'num_comments').reverse(),
+    POINTS: list => sortBy(list, 'points').reverse(),
+};
+
 class App extends Component {
 
     _isMounted = false;
@@ -121,6 +175,7 @@ class App extends Component {
             searchKey: '',
             error: null,
             isLoading: false,
+            sortKey: 'NONE',
         };
 
         this.needsToSearchTopStories = this.needsToSearchTopStories.bind(this);
@@ -129,6 +184,7 @@ class App extends Component {
         this.onDismiss = this.onDismiss.bind(this);
         this.setSearchTopstories = this.setSearchTopstories.bind(this);
         this.fetchSearchTopstories = this.fetchSearchTopstories.bind(this);
+        this.onSort = this.onSort.bind(this);
     }
 
     needsToSearchTopStories(searchTerm) {
@@ -203,8 +259,12 @@ class App extends Component {
         });
     }
 
+    onSort(sortKey) {
+        this.setState({sortKey});
+    }
+
     render() {
-        const {searchTerm, results, searchKey, error, isLoading} = this.state;
+        const {searchTerm, results, searchKey, error, isLoading, sortKey} = this.state;
         const page = (results && results[searchKey] && results[searchKey].page) || 0;
         /*if (!results[searchKey]) {
             return null;
@@ -224,7 +284,9 @@ class App extends Component {
                     ? <div className="interactions">
                         <p>Something went wrong.</p>
                     </div>
-                    : <Table list={list} onDismiss={this.onDismiss}/>
+                    : <Table list={list} onDismiss={this.onDismiss}
+                             sortKey={sortKey}
+                             onSort={this.onSort}/>
                 }
                 {/*<Table list={result.hits} pattern={searchTerm} onDismiss={this.onDismiss}/>*/}
                 {/*{result
