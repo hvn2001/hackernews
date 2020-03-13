@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
-
+import { sortBy } from 'lodash';
 require('./App.css');
 
 const DEFAULT_QUERY = 'redux';
