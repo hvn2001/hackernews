@@ -23,6 +23,12 @@ const isSearched = (searchTerm) => (item) =>
     item.title.toLowerCase().includes(searchTerm.toLowerCase());
 
 class Search extends Component {
+    componentDidMount() {
+        if (this.input) {
+            this.input.focus();
+        }
+    }
+
     render() {
         const {value, onChange, onSubmit, children} = this.props;
         return <form onSubmit={onSubmit}>
@@ -30,6 +36,7 @@ class Search extends Component {
                 type="text"
                 value={value}
                 onChange={onChange}
+                ref={el => this.input = el}
             />
             <button type="submit">
                 {children}
