@@ -235,7 +235,7 @@ Table.propTypes = {
         PropTypes.shape({
             objectID: PropTypes.string.isRequired,
             author: PropTypes.string,
-            url: PropTypes.string,
+            url: PropTypes.string, // PropTypes.string.isRequired
             num_comments: PropTypes.number,
             points: PropTypes.number,
         })
