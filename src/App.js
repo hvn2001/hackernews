@@ -79,6 +79,7 @@ class App extends Component {
             results: null,
             searchTerm: DEFAULT_QUERY,
             searchKey: '',
+            error: null,
         };
 
         this.needsToSearchTopStories = this.needsToSearchTopStories.bind(this);
@@ -118,7 +119,7 @@ class App extends Component {
         fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`)
             .then(response => response.json())
             .then(result => this.setSearchTopstories(result))
-            .catch(e => e);
+            .catch(error => this.setState({error}));
     }
 
     componentDidMount() {
@@ -157,7 +158,7 @@ class App extends Component {
     }
 
     render() {
-        const {searchTerm, results, searchKey} = this.state;
+        const {searchTerm, results, searchKey, error} = this.state;
         const page = (results && results[searchKey] && results[searchKey].page) || 0;
         /*if (!results[searchKey]) {
             return null;
@@ -173,14 +174,20 @@ class App extends Component {
                     <Search value={searchTerm} onChange={this.onSearchChange}
                             onSubmit={this.onSearchSubmit}>Search</Search>
                 </div>
+                {error
+                    ? <div className="interactions">
+                        <p>Something went wrong.</p>
+                    </div>
+                    : <Table list={list} onDismiss={this.onDismiss}/>
+                }
                 {/*<Table list={result.hits} pattern={searchTerm} onDismiss={this.onDismiss}/>*/}
                 {/*{result
                     ? <Table list={result.hits} pattern={searchTerm} onDismiss={this.onDismiss}/>
                     : null
                 }*/}
-                {list &&
+                {/*{list &&
                 <Table list={list} onDismiss={this.onDismiss}/>
-                }
+                }*/}
                 <div className="interactions">
                     <Button onClick={() => this.fetchSearchTopstories(searchKey, page + 1)}>
                         More
