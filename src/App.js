@@ -81,11 +81,16 @@ class App extends Component {
             searchKey: '',
         };
 
+        this.needsToSearchTopStories = this.needsToSearchTopStories.bind(this);
         this.onSearchChange = this.onSearchChange.bind(this);
         this.onSearchSubmit = this.onSearchSubmit.bind(this);
         this.onDismiss = this.onDismiss.bind(this);
         this.setSearchTopstories = this.setSearchTopstories.bind(this);
         this.fetchSearchTopstories = this.fetchSearchTopstories.bind(this);
+    }
+
+    needsToSearchTopStories(searchTerm) {
+        return !this.state.results[searchTerm];
     }
 
     setSearchTopstories(result) {
@@ -130,7 +135,9 @@ class App extends Component {
     onSearchSubmit(event) {
         const {searchTerm} = this.state;
         this.setState({searchKey: searchTerm});
-        this.fetchSearchTopstories(searchTerm);
+        if (this.needsToSearchTopStories(searchTerm)) {
+            this.fetchSearchTopstories(searchTerm);
+        }
         event.preventDefault();
     }
 
