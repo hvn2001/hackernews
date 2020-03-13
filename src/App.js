@@ -79,6 +79,9 @@ class Table extends Component {
     }
 }
 
+const Loading = () =>
+    <div>Loading ...</div>
+
 class App extends Component {
 
     _isMounted = false;
@@ -122,8 +125,8 @@ class App extends Component {
             results: {
                 ...results,
                 [searchKey]: {hits: updatedHits, page},
-                isLoading: false
-            }
+            },
+            isLoading: false
         });
     }
 
@@ -175,7 +178,7 @@ class App extends Component {
     }
 
     render() {
-        const {searchTerm, results, searchKey, error} = this.state;
+        const {searchTerm, results, searchKey, error, isLoading} = this.state;
         const page = (results && results[searchKey] && results[searchKey].page) || 0;
         /*if (!results[searchKey]) {
             return null;
@@ -206,9 +209,12 @@ class App extends Component {
                 <Table list={list} onDismiss={this.onDismiss}/>
                 }*/}
                 <div className="interactions">
-                    <Button onClick={() => this.fetchSearchTopstories(searchKey, page + 1)}>
-                        More
-                    </Button>
+                    {isLoading
+                        ? <Loading/>
+                        : <Button onClick={() => this.fetchSearchTopstories(searchKey, page + 1)}>
+                            More
+                        </Button>
+                    }
                 </div>
             </div>
         );
