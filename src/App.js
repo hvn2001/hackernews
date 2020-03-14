@@ -69,7 +69,11 @@ const Sort = ({sortKey, onSort, children}) =>
 
 class Table extends Component {
     render() {
-        const {list, onDismiss, sortKey, onSort} = this.props;
+        const {list, onDismiss, sortKey, onSort, isSortReverse} = this.props;
+        const sortedList = SORTS[sortKey](list);
+        const reverseSortedList = isSortReverse
+            ? sortedList.reverse()
+            : sortedList;
         return (
             <div className="table">
                 <div className="table-header">
@@ -77,6 +81,7 @@ class Table extends Component {
                     <Sort
                         sortKey={'TITLE'}
                         onSort={onSort}
+                        activeSortKey={sortKey}
                     >
                       Title
                     </Sort>
@@ -85,6 +90,7 @@ class Table extends Component {
                     <Sort
                         sortKey={'AUTHOR'}
                         onSort={onSort}
+                        activeSortKey={sortKey}
                     >
                       Author
                     </Sort>
@@ -93,6 +99,7 @@ class Table extends Component {
                     <Sort
                         sortKey={'COMMENTS'}
                         onSort={onSort}
+                        activeSortKey={sortKey}
                     >
                       Comments
                     </Sort>
@@ -101,6 +108,7 @@ class Table extends Component {
                     <Sort
                         sortKey={'POINTS'}
                         onSort={onSort}
+                        activeSortKey={sortKey}
                     >
                       Points
                     </Sort>
@@ -109,7 +117,7 @@ class Table extends Component {
                     Archive
                   </span>
                 </div>
-                {SORTS[sortKey](list).map(item =>
+                {reverseSortedList.map(item =>
                     <div key={item.objectID} className="table-row">
                         <span style={{width: '40%'}}><a href={item.url}>{item.title}</a></span>
                         <span style={{width: '30%'}}>{item.author}</span>
@@ -176,6 +184,7 @@ class App extends Component {
             error: null,
             isLoading: false,
             sortKey: 'NONE',
+            isSortReverse: false,
         };
 
         this.needsToSearchTopStories = this.needsToSearchTopStories.bind(this);
@@ -260,11 +269,12 @@ class App extends Component {
     }
 
     onSort(sortKey) {
-        this.setState({sortKey});
+        const isSortReverse = this.state.sortKey === sortKey && !this.state.isSortReverse;
+        this.setState({sortKey, isSortReverse});
     }
 
     render() {
-        const {searchTerm, results, searchKey, error, isLoading, sortKey} = this.state;
+        const {searchTerm, results, searchKey, error, isLoading, sortKey, isSortReverse} = this.state;
         const page = (results && results[searchKey] && results[searchKey].page) || 0;
         /*if (!results[searchKey]) {
             return null;
@@ -286,6 +296,7 @@ class App extends Component {
                     </div>
                     : <Table list={list} onDismiss={this.onDismiss}
                              sortKey={sortKey}
+                             isSortReverse={isSortReverse}
                              onSort={this.onSort}/>
                 }
                 {/*<Table list={result.hits} pattern={searchTerm} onDismiss={this.onDismiss}/>*/}
